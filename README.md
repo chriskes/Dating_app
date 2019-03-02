@@ -6,7 +6,7 @@ This is a dating app for a school assigment
 ## How to install?
 1. 
 ```
-git clone https://github.com/nlvo/dating-app.git
+git clone https://github.com/chriskes/Dating_app
 ```
 2. 
 ```
