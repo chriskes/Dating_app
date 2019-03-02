@@ -12,7 +12,4 @@ git clone https://github.com/chriskes/Dating_app
 ```
 npm install
 ```
-3. 
-```
-npm run start
-```
+
