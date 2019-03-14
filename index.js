@@ -1,8 +1,12 @@
 //--------- REQUIRE PACKAGES ---------//
-const nodemon = require('nodemon');
 const validator = require('validator');
+const slug = require('slug');
+const bodyParser = require('body-parser');
+const multer = require('multer'); 
+
 const express = require('express');
 const path = require('path');
+
 const app = express();
 
 //--------- INITIALIZE PUG TEMPLATING ENGINE ---------//
