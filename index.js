@@ -3,37 +3,62 @@ const validator = require('validator');
 const slug = require('slug');
 const bodyParser = require('body-parser');
 const multer = require('multer'); 
-
 const express = require('express');
 const path = require('path');
 
-const app = express();
+var data = [
+  {
+    id: 'evil-dead',
+    title: 'Evil Dead',
+    plot: 'Five friends travel to a cabin in the …',
+    description: 'Five friends head to a remote …'
+  },
+  {
+    id: 'the-shawshank-redemption',
+    title: 'The Shawshank Redemption',
+    plot: 'Two imprisoned men bond over a number …',
+    description: 'Andy Dufresne is a young and  …'
+  }
+]
 
-//--------- INITIALIZE PUG TEMPLATING ENGINE ---------//
-app.set('view engine', 'pug');
+const app = express()
+  .use('/static', express.static('static'))
+  .set('view engine', 'ejs')
+  .set('views', 'view')
+;
 
-//--------- CREATE VIRTUAL PATH TO STATIC DIRECTORY ---------//
-app.use('/static', express.static('static'));
+function movies(req, res){
+  res.render ('list.ejs', {data: data})
+}
 
-//--------- HOME PAGE ---------//
-app.get('/', function (req, res) {
-  res.render('index.pug')
-})
+function movie(req, res, next){
+  res.render('detail.ejs', {data: movie})
+}
 
-//--------- ABOUT PAGE ---------//
-app.get('/about', function (req, res) {
-  res.render('about.pug')
-})
+function notFound(req, res){
+  res.status(404).render('not-found.ejs')
+}
 
-//--------- LOGIN PAGE ---------//
-app.get('/login', function (req, res) {
-  res.render('login.pug')
-})
 
-//--------- 404 ---------//
-app.use(function (req, res, next){
-  res.status(404).sendFile(path.join(__dirname, '/static/404.html'));
-})
+// //--------- HOME PAGE ---------//
+// app.get('/', function (req, res) {
+//   res.render('index.pug')
+// })
+
+// //--------- ABOUT PAGE ---------//
+// app.get('/about', function (req, res) {
+//   res.render('about.pug')
+// })
+
+// //--------- LOGIN PAGE ---------//
+// app.get('/login', function (req, res) {
+//   res.render('login.pug')
+// })
+
+// //--------- 404 ---------//
+// app.use(function (req, res, next){
+//   res.status(404).sendFile(path.join(__dirname, '/static/404.html'));
+// })
 
 //--------- PORT ---------//
 app.listen(8000);
