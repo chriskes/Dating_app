@@ -2,12 +2,12 @@
 const validator = require('validator');
 const slug = require('slug');
 const bodyParser = require('body-parser');
-const multer = require('multer'); 
+const multer = require('multer');
 const express = require('express');
-const path = require('path');
+const find = require('array-find');
+var upload = multer({dest: 'static/upload/'})
 
-var data = [
-  {
+var data = [{
     id: 'evil-dead',
     title: 'Evil Dead',
     plot: 'Five friends travel to a cabin in the …',
@@ -21,44 +21,72 @@ var data = [
   }
 ]
 
-const app = express()
-  .use('/static', express.static('static'))
+express()
+  .use(express.static('client'))
+  .use(bodyParser.urlencoded({extend: true}))
   .set('view engine', 'ejs')
-  .set('views', 'view')
-;
+  .set('views', 'server')
+  .get('/', home)
+  .get('/list', movies)
+  .get('/add', form)
+  .get('/:id', movie)
+  .delete('/:id', remove)
+  .post('/', upload.single('cover'), add)
+  .use(notFound)
+  .listen(8000)
 
-function movies(req, res){
-  res.render ('list.ejs', {data: data})
+function home(req, res) {
+  res.render('home.ejs')
 }
 
-function movie(req, res, next){
+function movies(req, res) {
+  res.render('list.ejs', {data: data})
+}
+
+function movie(req, res, next) {
+  var id = req.params.id
+  var movie = find(data, function (value) {
+    return value.id === id
+  })
+
+//---------- Statement below prevents the callback from triggering twice, preventing error ----------//
+  if (!movie) {
+    next();
+    return;
+  }
+
   res.render('detail.ejs', {data: movie})
 }
 
-function notFound(req, res){
-  res.status(404).render('not-found.ejs')
+
+function form(req, res) {
+  res.render('add.ejs')
 }
 
+function add(req, res) {
+  var id = slug(req.body.title).toLowerCase()
 
-// //--------- HOME PAGE ---------//
-// app.get('/', function (req, res) {
-//   res.render('index.pug')
-// })
+  data.push({
+    id: id,
+    title: req.body.title,
+    cover: req.file ? req.file.filename : null,
+    plot: req.body.plot,
+    description: req.body.description
+  })
 
-// //--------- ABOUT PAGE ---------//
-// app.get('/about', function (req, res) {
-//   res.render('about.pug')
-// })
+  res.redirect('/' + id)
+}
 
-// //--------- LOGIN PAGE ---------//
-// app.get('/login', function (req, res) {
-//   res.render('login.pug')
-// })
+function remove(req, res) {
+  var id = req.params.id
 
-// //--------- 404 ---------//
-// app.use(function (req, res, next){
-//   res.status(404).sendFile(path.join(__dirname, '/static/404.html'));
-// })
+  data = data.filter(function (value) {
+    return value.id !== id
+  })
 
-//--------- PORT ---------//
-app.listen(8000);
+  res.json({status: 'ok'})
+}
+
+function notFound(req, res) {
+  res.status(404).render('not-found.ejs')
+}

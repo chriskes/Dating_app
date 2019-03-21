@@ -1,0 +1,20 @@
+<% include head.ejs %>
+
+<main class="profile-main">
+    <section>
+        <% if (data.movie) { %>
+            <img alt="<%= data.title %>" class="profile-picture" src="/upload/<%= data.profile %>">
+        <% } %>
+        <h1><%= data.title %></h1>
+        <% if (data.cover) { %>
+            <img alt src="/upload/<%= data.cover %>">
+            <% } %>
+            
+        <p><%= data.description %></p>
+        <p><button id=js-remove data-id="<%= data.id %>" class=danger>Remove</button>
+        </p>
+    </section>
+</main>
+
+<% include tail.ejs %>
+
