@@ -4,14 +4,14 @@
 <% for (var index = 0; index < data.length; index++) { %>
   <h2>
     <a href="/<%= data[index].id %>">
-      <%= data[index].title %>
+      <%= data[index].name %>
     </a>
   </h2>
-  <p><%= data[index].plot %></p>
+  <p><%= data[index].age %></p>
 <% } %>
 
 <p>
-    <a href=/add>Add a movie</a>
+    <a href=/add>Add a person</a>
   </p>
 </body>
 <% include tail.ejs %>

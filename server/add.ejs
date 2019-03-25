@@ -1,18 +1,15 @@
 <% include head.ejs %>
 
 <body>
-  <h1>Add a new movie</h1>
+  <h1>Create your account now!</h1>
   <form action=/ method=post enctype="multipart/form-data">
-    <label>Title <input name=title>
-    </label>
-    <label>Cover<input name=cover type=file accept=image/*></label> 
-    <label>Plot (short)<input name=plot></label>
-    <label>
-      Description (long)
-      <textarea name=description rows=5></textarea>
-    </label>
+    <label>Your name <input name=name></label>
+    <label>Profile picture<input name=profile type=file accept=image/*> </label> 
+    <label>Age<input name=age></label>
+    <label> Interests <textarea name=interests rows=5></textarea> </label>
     <button>Add</button>
   </form>
 </body>
 <% include tail.ejs %>
+
 </html>

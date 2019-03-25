@@ -1,7 +1,22 @@
-<% include head.ejs %> 
-<body>
-    <nav>
+<% include head.ejs %>
+<title>Harty</title>
 
+<body>
+    <header>
+        <h1>The arty dating site</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/add">Add art</a></li>
+            <li><a href="/list">Choose art</a></li>
+        </ul>
     </nav>
-    
+    <section>
+        <article>
+            <h2><a href="/add">Create an account!</a></h2>
+        </article>
+    </section>
 </body>
+<% include tail.ejs %>
+</html>
