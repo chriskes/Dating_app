@@ -1,11 +1,22 @@
 //--------- REQUIRE PACKAGES ---------//
-const validator = require('validator');
 const slug = require('slug');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const express = require('express');
 const find = require('array-find');
-var upload = multer({dest: 'client/upload/'})
+const mongo = require('mongodb');
+
+const upload = multer({dest: 'client/upload/'});
+require('dotenv').config();
+
+var db = null
+var url = 'mongodb://' + process.env.DB_HOST + ':' + process.env.DB_PORT
+
+mongo.MongoClient.connect(url, function (err, client) {
+  if (err) throw err
+  db = client.db(process.env.DB_NAME)
+})
+
 
 var data = [{
   id: 'johan-keizer',
@@ -40,7 +51,15 @@ function home(req, res) {
 }
 
 function accounts(req, res) {
-  res.render('list.ejs', {data: data})
+  db.collection('movie').find().toArray(done)
+
+  function done(err, data) {
+    if (err) {
+      next(err)
+    } else {
+      res.render('list.ejs', {data: data})
+    }
+  }
 }
 
 function account(req, res, next) {
