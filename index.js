@@ -38,7 +38,7 @@ express()
   .set('view engine', 'ejs')
   .set('views', 'server')
   .get('/', home)
-  .get('/list', accounts)
+  .get('/list', accountlist)
   .get('/add', form)
   .get('/:id', account)
   .delete('/:id', remove)
@@ -50,7 +50,7 @@ function home(req, res) {
   res.render('home.ejs')
 }
 
-function accounts(req, res) {
+function accountlist(req, res) {
   db.collection('movie').find().toArray(done)
 
   function done(err, data) {
