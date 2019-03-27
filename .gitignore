@@ -1,4 +1,4 @@
 node_modules/
+client/upload/
 .DS_Store
 .env
-workspace
