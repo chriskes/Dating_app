@@ -4,32 +4,43 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const express = require('express');
 const find = require('array-find');
-const mongo = require('mongodb');
 
-const upload = multer({dest: 'client/upload/'});
-require('dotenv').config();
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://chriskes:Projtech18#@cluster0-bafng.mongodb.net/test?retryWrites=true";
+const client = new MongoClient(uri, { useNewUrlParser: true });
 
-var db = null
-var url = 'mongodb://' + process.env.DB_HOST + ':' + process.env.DB_PORT
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});
 
-mongo.MongoClient.connect(url, function (err, client) {
-  if (err) throw err
-  db = client.db(process.env.DB_NAME)
-})
+const upload = multer({
+  dest: 'client/upload/'});
+  
+// require('dotenv').config();
+
+// var db = null
+// var url = 'mongodb://' + process.env.DB_HOST + ':' + process.env.DB_PORT
+
+// mongo.MongoClient.connect(url, function (err, client) {
+//   if (err) throw err
+//   db = client.db(process.env.DB_NAME)
+// })
 
 
 var data = [{
-  id: 'johan-keizer',
-  name: 'Johan Keizer',
-  age: '25',
-  interests: 'Piet Mondriaan'
-},
-{
-  id: 'alex-zwart',
-  name: 'Alex Zwart',
-  age: '34',
-  interests: 'Pablo Picasso'
-}
+    id: 'johan-keizer',
+    name: 'Johan Keizer',
+    age: '25',
+    interests: 'Piet Mondriaan'
+  },
+  {
+    id: 'alex-zwart',
+    name: 'Alex Zwart',
+    age: '34',
+    interests: 'Pablo Picasso'
+  }
 ]
 
 express()
@@ -51,60 +62,74 @@ function home(req, res) {
 }
 
 function accountlist(req, res) {
-  db.collection('movie').find().toArray(done)
+  db.collection('accountlist').find().toArray(done)
 
-  function done(err, data) {
+function done(err, data) {
     if (err) {
       next(err)
     } else {
-      res.render('list.ejs', {data: data})
+      res.render('list.ejs', {
+        data: data
+      })
     }
   }
 }
 
 function account(req, res, next) {
   var id = req.params.id
-  var detail = find(data, function (value) {
-    return value.id === id
-  })
+  db.collection('accountlist').findOne({
+    _id: mongo.ObjectID(id)
+  }, done)
 
-//---------- Statement below prevents the callback from triggering twice, preventing error ----------//
-  if (!account) {
-    next();
-    return;
+function done(err, data) {
+    if (err) {
+      next(err)
+    } else {
+      res.render('detail.ejs', {
+        data: data
+      })
+    }
   }
-
-  res.render('detail.ejs', {data: detail})
 }
 
 function form(req, res) {
-  res.render('add.ejs')
-}
+    res.render('add.ejs')
+  }
 
-function add(req, res) {
-  var id = slug(req.body.name).toLowerCase()
+function add(req, res, next) {
+    db.collection('profile').insertOne({
+      name: req.body.name,
+      profile: req.file ? req.file.filename : null,
+      age: req.body.age,
+      interests: req.body.interests
+    }, done)
 
-  data.push({
-    id: id,
-    name: req.body.name,
-    profile: req.file ? req.file.filename : null,
-    age: req.body.age,
-    interests: req.body.interests
-  })
-
-  res.redirect('/' + id)
-}
+function done(err, data) {
+      if (err) {
+        next(err)
+      } else {
+        res.redirect('/' + data.insertedId)
+      }
+    }
+  }
 
 function remove(req, res) {
-  var id = req.params.id
+    var id = req.params.id
+    db.collection('movie').deleteOne({
+      _id: mongo.ObjectID(id)
+    }, done)
+  }  
 
-  data = data.filter(function (value) {
-    return value.id !== id
-  })
-
-  res.json({status: 'ok'})
-}
-
+function done(err) {
+      if (err) {
+        next(err)
+      } else {
+        res.json({
+          status: 'ok'
+        })
+      }
+    }
+  
 function notFound(req, res) {
-  res.status(404).render('not-found.ejs')
-}
+    res.status(404).render('not-found.ejs')
+  }
