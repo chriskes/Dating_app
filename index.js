@@ -4,44 +4,24 @@ const bodyParser = require('body-parser');
 const multer = require('multer');
 const express = require('express');
 const find = require('array-find');
-
 const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://chriskes:Projtech18#@cluster0-bafng.mongodb.net/test?retryWrites=true";
+
+require('dotenv').config();
+const db = require('db');
+
+const uri = 'mongodb+srv://chriskes:Projtech18%23@cluster0-bafng.mongodb.net/test?retryWrites=true';
 const client = new MongoClient(uri, { useNewUrlParser: true });
 
 client.connect(err => {
-  const collection = client.db("test").collection("devices");
+  const collection = client.db('datingapp').collection('data');
   // perform actions on the collection object
+  db = client.db(dbName);
   client.close();
+
 });
 
 const upload = multer({
   dest: 'client/upload/'});
-  
-// require('dotenv').config();
-
-// var db = null
-// var url = 'mongodb://' + process.env.DB_HOST + ':' + process.env.DB_PORT
-
-// mongo.MongoClient.connect(url, function (err, client) {
-//   if (err) throw err
-//   db = client.db(process.env.DB_NAME)
-// })
-
-
-var data = [{
-    id: 'johan-keizer',
-    name: 'Johan Keizer',
-    age: '25',
-    interests: 'Piet Mondriaan'
-  },
-  {
-    id: 'alex-zwart',
-    name: 'Alex Zwart',
-    age: '34',
-    interests: 'Pablo Picasso'
-  }
-]
 
 express()
   .use(express.static('client'))
@@ -62,7 +42,7 @@ function home(req, res) {
 }
 
 function accountlist(req, res) {
-  db.collection('accountlist').find().toArray(done)
+  db.collection('data').find().toArray(done)
 
 function done(err, data) {
     if (err) {
@@ -77,7 +57,7 @@ function done(err, data) {
 
 function account(req, res, next) {
   var id = req.params.id
-  db.collection('accountlist').findOne({
+  db.collection('data').findOne({
     _id: mongo.ObjectID(id)
   }, done)
 
@@ -97,7 +77,7 @@ function form(req, res) {
   }
 
 function add(req, res, next) {
-    db.collection('profile').insertOne({
+    db.collection('data').insertOne({
       name: req.body.name,
       profile: req.file ? req.file.filename : null,
       age: req.body.age,
@@ -115,7 +95,7 @@ function done(err, data) {
 
 function remove(req, res) {
     var id = req.params.id
-    db.collection('movie').deleteOne({
+    db.collection('data').deleteOne({
       _id: mongo.ObjectID(id)
     }, done)
   }  
