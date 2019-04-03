@@ -1,23 +1,26 @@
 //--------- REQUIRE PACKAGES ---------//
-const slug = require('slug');
-const bodyParser = require('body-parser');
-const multer = require('multer');
-const express = require('express');
-const find = require('array-find');
-const MongoClient = require('mongodb').MongoClient;
+const bodyParser = require('body-parser')
+const multer = require('multer')
+const express = require('express')
+const MongoClient = require("mongodb").MongoClient; // source https://www.mongodb.com
+const ObjectId = require("mongodb").ObjectID
+require('dotenv').config()
 
-require('dotenv').config();
-const db = require('db');
+//--------------------- START DB CONNECTION
+let db = null;
 
-const uri = 'mongodb+srv://chriskes:Projtech18%23@cluster0-bafng.mongodb.net/test?retryWrites=true';
-const client = new MongoClient(uri, { useNewUrlParser: true });
+const dbUri = process.env.DB_URI;
+const dbName = process.env.DB_NAME;
+const client = new MongoClient(dbUri, {
+    useNewUrlParser: true
+});
 
-client.connect(err => {
-  const collection = client.db('datingapp').collection('data');
-  // perform actions on the collection object
-  db = client.db(dbName);
-  client.close();
-
+client.connect(error => {
+    if (error) {
+        console.log(error);
+        throw error;
+    }
+    db = client.db(dbName);
 });
 
 const upload = multer({
@@ -57,7 +60,7 @@ function done(err, data) {
 
 function account(req, res, next) {
   var id = req.params.id
-  db.collection('data').findOne({
+  db.collection('persons').findOne({
     _id: mongo.ObjectID(id)
   }, done)
 
